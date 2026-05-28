@@ -8,40 +8,48 @@ _Last regenerated: 2026-05-28_
 
 | Section | Count |
 |---|---|
-| Verified sources (read & quoted) | 0 |
-| Claim-evidence threads | 0 |
-| Leads files (unverified material) | 0 |
+| Verified sources (read & quoted) | 2 |
+| Claim-evidence threads | 4 |
+| Leads files (unverified material) | 5 |
 | Raw primary-source files awaiting processing | 2 |
-| Weekly digests | 0 |
-| Session logs | 0 |
+| Weekly digests | 1 |
+| Session logs | 1 |
 
 ## Verified sources
 
 Each entry: short title — layer — read status — last updated. Click through for the full source note (frontmatter, verbatim quotes, tensions).
 
-_(empty)_
+- [Condliffe-2017-pbl-literature-review](sources/Condliffe-2017-pbl-literature-review.md) — empirical — read — 2026-05-28
+  - "Project-Based Learning: A Literature Review (Working Paper)"
+- [HQPBL-2018-framework](sources/HQPBL-2018-framework.md) — practitioner — read — 2026-05-28
+  - "A Framework for High Quality Project Based Learning"
 
 ## Claim-evidence threads
 
 Each thread tracks supporting and counter-evidence for one thesis seed. Claim count is grep'd from `## Claim` headings; the count is approximate while threads are still in their first-claim phase.
 
-_(empty)_
+- [assessment-and-rigor](claim-evidence/assessment-and-rigor.md) — 5 claim(s) — last updated 2026-05-28
+- [design-elements](claim-evidence/design-elements.md) — 4 claim(s) — last updated 2026-05-28
+- [literature-findings](claim-evidence/literature-findings.md) — 4 claim(s) — last updated 2026-05-28
+- [system-conditions](claim-evidence/system-conditions.md) — 5 claim(s) — last updated 2026-05-28
 
 ## Leads (unverified material)
 
 Material the agent has heard about but not yet read. Promotion to claim-evidence requires a verbatim quote, URL, and access date.
 
-_(empty)_
+- [Chen-Yang-2019-pbl-meta-analysis](leads/Chen-Yang-2019-pbl-meta-analysis.md) — last updated 2026-05-28
+- [EL-Education-core-practices](leads/EL-Education-core-practices.md) — last updated 2026-05-28
+- [Kilpatrick-1918-project-method](leads/Kilpatrick-1918-project-method.md) — last updated 2026-05-28
+- [PBLWorks-2015-gold-standard-pbl](leads/PBLWorks-2015-gold-standard-pbl.md) — last updated 2026-05-28
+- [Saavedra-2021-knowledge-in-action-ap-gov](leads/Saavedra-2021-knowledge-in-action-ap-gov.md) — last updated 2026-05-28
 
 ## Raw primary-source files awaiting processing
 
 Files in `sources-raw/` that the fetcher workflow has delivered but the agent has not yet produced a verified source note for. The agent reads from here each Saturday.
 
-- `Condliffe-2017-pbl-literature-review.pdf` (1039KB)
-- `HQPBL-2018-framework.pdf` (734KB)
 
 ## Weekly digests
 
 Newest first. Each digest is the artifact written for Zack — start here when catching up.
 
-_(empty)_
+- [2026-05-28](digests/2026-05-28.md)

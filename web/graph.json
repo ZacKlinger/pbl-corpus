@@ -1,20 +1,320 @@
 {
   "nodes": [
     {
-      "id": "raw:Condliffe-2017-pbl-literature-review",
-      "label": "Condliffe 2017 pbl literature review (raw)",
-      "type": "raw",
-      "layer": "raw",
-      "path": "sources-raw/Condliffe-2017-pbl-literature-review.pdf"
+      "id": "thread:assessment-and-rigor",
+      "label": "Assessment & rigor",
+      "type": "thread",
+      "layer": "thread",
+      "claims": 5,
+      "path": "claim-evidence/assessment-and-rigor.md",
+      "seed_framing": "How rigor is preserved when the unit of work is a project rather than a unit-test. PBLWorks rubrics, EL's *Models of Excellence*, HTH's presentations of learning / defense of learning, NTN's learning outcome rubrics, the relationship between PBL and Understanding by Design (Wiggins & McTighe) backward design, standards alignment in PBL, performance assessment traditions (Wiggins, Mehrens, Stiggins), and how the field handles the assessment-of-deeper-learning question."
     },
     {
-      "id": "raw:HQPBL-2018-framework",
-      "label": "HQPBL 2018 framework (raw)",
-      "type": "raw",
-      "layer": "raw",
-      "path": "sources-raw/HQPBL-2018-framework.pdf"
+      "id": "thread:design-elements",
+      "label": "Design elements",
+      "type": "thread",
+      "layer": "thread",
+      "claims": 4,
+      "path": "claim-evidence/design-elements.md",
+      "seed_framing": "What specifies a project as PBL (vs. coursework with a project attached). The PBLWorks Gold Standard's seven essential elements; the HQPBL framework's six criteria; the EL Education core practices; HTH's defining features; New Tech Network's design principles. Where these converge, where they diverge, and what the *operative* definition of a \"project\" is across the canonical practitioner frameworks. The corpus's job is to render this faithfully \u2014 including the disagreements \u2014 not to crown one definition."
+    },
+    {
+      "id": "thread:literature-findings",
+      "label": "Literature findings",
+      "type": "thread",
+      "layer": "thread",
+      "claims": 4,
+      "path": "claim-evidence/literature-findings.md",
+      "seed_framing": "What outcomes have been studied (achievement, transfer, engagement, agency, equity gaps, college readiness); what moderators have been identified (implementation quality, teacher PD, time, system support, curriculum design); where the field disagrees with itself about what constitutes PBL effectiveness or quality. Cataloging, not evaluating. The Chen & Yang meta-analysis, the Condliffe/MDRC synthesis, the Lucas Education Research RCTs, the Mehta & Fine *In Search of Deeper Learning* findings."
+    },
+    {
+      "id": "thread:system-conditions",
+      "label": "System conditions",
+      "type": "thread",
+      "layer": "thread",
+      "claims": 5,
+      "path": "claim-evidence/system-conditions.md",
+      "seed_framing": "What the implementation literature consistently documents as the conditions under which PBL succeeds: sustained PD, common planning time, curriculum integration, schedule blocks, leadership support, coaching infrastructure, freedom from compliance overhead that crowds out design time. **The constraint on PBL execution is system-level, not teacher-level.** The implementation literature is direct about this; the corpus records it faithfully."
+    },
+    {
+      "id": "source:Condliffe-2017-pbl-literature-review",
+      "label": "Barbara Condliffe 2017",
+      "title": "Project-Based Learning: A Literature Review (Working Paper)",
+      "type": "source",
+      "layer": "empirical",
+      "year": "2017",
+      "read_status": "read",
+      "path": "sources/Condliffe-2017-pbl-literature-review.md",
+      "thesis_excerpt": "MDRC's working-paper update of Thomas (2000) surveys the PBL literature published 2000\u20132017 and reaches a stable, deliberately modest conclusion: the field still lacks consensus on what PBL is, the implementation literature documents predictable challenges, and the outcomes evidence is \"promising but not proven.\" The paper is descriptive \u2014 it synthesizes the published design principles (Larmer & Mergendoller; Krajcik & Shin; Parker et al.; Darling-Hammond et al.; Ravitz; Thomas; Grant), maps the three ways PBL enters K-12 settings (externally developed curricula, teacher-initiated PBL,\u2026",
+      "quotes": [
+        "\"The working paper suggests that the evidence for PBL's effectiveness in improving students' outcomes is 'promising but not proven.'\" \u2014 p. iii (Abstract) \u2014 layer: empirical",
+        "\"Evaluations of its effectiveness have been hampered by the paucity of valid, reliable, and readily usable measures of the kinds of deeper learning and interpersonal and intrapersonal competencies that PBL aims to promote.\" \u2014 p. iii (Abstract) \u2014 layer: empirical",
+        "\"some studies have found positive effects associated with the use of PBL curricula in science and social studies classes. Evidence for its effectiveness in math and literacy classes is more limited. In particular, it has been noted that math teachers have found it difficult to integrate PBL into their instruction.\" \u2014 p. iii (Abstract) \u2014 layer: empirical"
+      ]
+    },
+    {
+      "id": "source:HQPBL-2018-framework",
+      "label": "HQPBL Steering Committee (Buck Institute for Education facilitated 2018",
+      "title": "A Framework for High Quality Project Based Learning",
+      "type": "source",
+      "layer": "practitioner",
+      "year": "2018",
+      "read_status": "read",
+      "path": "sources/HQPBL-2018-framework.md",
+      "thesis_excerpt": "The HQPBL Framework is a six-page practitioner consensus document, facilitated by the Buck Institute for Education, that proposes a *student-experience-side* description of high-quality PBL \u2014 explicitly distinguishing itself from PBL design frameworks written from the teacher's perspective. The framework names six criteria \u2014 Intellectual Challenge and Accomplishment, Authenticity, Public Product, Collaboration, Project Management, and Reflection \u2014 and frames each as a set of guiding questions about what students experience. Its argument for existing is that PBL has gained adoption faster than\u2026",
+      "quotes": [
+        "\"At the present time, however, there is a lack of agreement about what goes into high quality Project Based Learning.\" \u2014 p. 1 \u2014 layer: practitioner",
+        "\"The Framework for High Quality Project Based Learning describes PBL in terms of the student experience and is intended to provide educators everywhere with a shared basis for designing and implementing good projects.\" \u2014 p. 1 \u2014 layer: practitioner",
+        "\"It describes six criteria, each of which must be at least minimally present in a project in order for it to be judged 'high quality.'\" \u2014 p. 1 \u2014 layer: practitioner"
+      ]
+    },
+    {
+      "id": "lead:Chen-Yang-2019-pbl-meta-analysis",
+      "label": "Chen Yang 2019 pbl meta analysis (leads)",
+      "type": "lead",
+      "layer": "lead",
+      "path": "leads/Chen-Yang-2019-pbl-meta-analysis.md"
+    },
+    {
+      "id": "lead:EL-Education-core-practices",
+      "label": "EL Education core practices (leads)",
+      "type": "lead",
+      "layer": "lead",
+      "path": "leads/EL-Education-core-practices.md"
+    },
+    {
+      "id": "lead:Kilpatrick-1918-project-method",
+      "label": "Kilpatrick 1918 project method (leads)",
+      "type": "lead",
+      "layer": "lead",
+      "path": "leads/Kilpatrick-1918-project-method.md"
+    },
+    {
+      "id": "lead:PBLWorks-2015-gold-standard-pbl",
+      "label": "PBLWorks 2015 gold standard pbl (leads)",
+      "type": "lead",
+      "layer": "lead",
+      "path": "leads/PBLWorks-2015-gold-standard-pbl.md"
+    },
+    {
+      "id": "lead:Saavedra-2021-knowledge-in-action-ap-gov",
+      "label": "Saavedra 2021 knowledge in action ap gov (leads)",
+      "type": "lead",
+      "layer": "lead",
+      "path": "leads/Saavedra-2021-knowledge-in-action-ap-gov.md"
     }
   ],
-  "edges": [],
-  "generated_at": "2026-05-28T02:45:08Z"
+  "edges": [
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:assessment-and-rigor",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "counters"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:design-elements",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "counters"
+    },
+    {
+      "source": "thread:literature-findings",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "counters"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:Condliffe-2017-pbl-literature-review",
+      "kind": "supports"
+    },
+    {
+      "source": "thread:system-conditions",
+      "target": "source:HQPBL-2018-framework",
+      "kind": "supports"
+    }
+  ],
+  "generated_at": "2026-05-28T03:37:57Z"
 }
