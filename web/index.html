@@ -900,12 +900,13 @@ function renderCatalog() {
         </div>`
       : "";
 
-    // Card actions link to the source itself, not to the agent's .md notes.
-    // The notes are surfaced via the side panel when the card is clicked.
+    // Three possible actions per card. Document and Original point at the
+    // source itself; Agent notes points at the agent-written .md (frontmatter
+    // + thesis + verbatim quotes + tensions).
     const actions = [];
     if (n.raw_path) {
-      // raw.githubusercontent.com lets the PDF render in the browser
-      // instead of GitHub's preview wrapper around it.
+      // raw.githubusercontent.com renders the PDF in the browser instead of
+      // GitHub's blob-wrapper preview.
       const rawHost = currentGithubBase
         .replace("https://github.com/", "https://raw.githubusercontent.com/")
         .replace("/blob/", "/");
@@ -919,6 +920,11 @@ function renderCatalog() {
         `<a class="card-action" href="${escapeHTML(n.url)}" target="_blank" rel="noopener" title="${escapeHTML(n.url)}">
           ↗ Original ${host ? `<span class="action-host">· ${escapeHTML(host)}</span>` : ""}
         </a>`
+      );
+    }
+    if (n.path) {
+      actions.push(
+        `<a class="card-action" href="${currentGithubBase}${n.path}" target="_blank" rel="noopener" title="Open the agent-written source note on GitHub">📝 Agent notes</a>`
       );
     }
     const actionsHtml = actions.length
