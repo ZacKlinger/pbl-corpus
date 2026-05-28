@@ -1,0 +1,138 @@
+name: fetch-sources
+
+# Auto-fetches primary sources listed in sources-wishlist.txt into sources-raw/.
+# The autonomous agent's container blocks outbound HTTP to most source hosts
+# (publishers, university PDF mirrors, archive.org). This workflow runs on
+# github.com infrastructure, which has unrestricted internet, and commits
+# fetched files back to the repo. The agent then reads from sources-raw/ in
+# the next Saturday session.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sources-wishlist.txt"
+      - ".github/workflows/fetch-sources.yml"
+  workflow_dispatch:
+  schedule:
+    # Weekly safety net: re-process the wishlist every Friday, in case a push
+    # event was missed or a URL has come back online before Saturday's run.
+    - cron: "0 12 * * 5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-sources
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch wishlist entries
+        id: fetch
+        run: |
+          set -euo pipefail
+
+          mkdir -p sources-raw
+          fetched=0
+          failed=0
+          : > /tmp/fetch-summary.txt
+
+          # Wishlist format: one entry per line.
+          #   <filename>\t<url>
+          # or
+          #   <filename> <url>
+          # Lines beginning with # and blank lines are ignored. Filename must
+          # not contain slashes (no escaping out of sources-raw/).
+          if [ ! -f sources-wishlist.txt ]; then
+            echo "No sources-wishlist.txt — nothing to do."
+            exit 0
+          fi
+
+          while IFS= read -r raw || [ -n "$raw" ]; do
+            line="$(printf '%s' "$raw" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+            case "$line" in
+              ''|\#*) continue ;;
+            esac
+
+            filename="$(printf '%s' "$line" | awk '{print $1}')"
+            url="$(printf '%s' "$line" | awk '{$1=""; sub(/^ +/,""); print}')"
+
+            if [ -z "$filename" ] || [ -z "$url" ]; then
+              echo "::warning::skipping malformed wishlist line: $line"
+              continue
+            fi
+            case "$filename" in
+              */*|..*) echo "::warning::skipping unsafe filename: $filename"; continue ;;
+            esac
+
+            target="sources-raw/$filename"
+            if [ -f "$target" ]; then
+              echo "skip (exists): $filename"
+              continue
+            fi
+
+            echo "fetching: $filename <- $url"
+            if curl -sSL --fail --max-time 90 -A "Mozilla/5.0 (compatible; pbl-corpus-fetcher/1.0)" -o "$target" "$url"; then
+              size=$(stat -c%s "$target")
+              # Guard against the landing-page-masquerading-as-PDF problem:
+              # publishers often return HTTP 200 with an HTML page when the
+              # real PDF is paywalled. Check the file type.
+              mime=$(file -b --mime-type "$target")
+              echo "  ok ($size bytes, $mime)"
+              # If the wishlist line claims a .pdf but we got text/html back,
+              # that's the masquerade. Record as failure.
+              case "$filename" in
+                *.pdf)
+                  case "$mime" in
+                    text/html|text/plain)
+                      echo "::warning::$filename: wanted PDF, got $mime — likely landing page, not the file"
+                      echo "! $filename  WRONG-TYPE ($mime)  <- $url" >> /tmp/fetch-summary.txt
+                      rm -f "$target"
+                      failed=$((failed + 1))
+                      continue
+                      ;;
+                  esac
+                  ;;
+              esac
+              echo "+ $filename  ($size bytes, $mime)  <- $url" >> /tmp/fetch-summary.txt
+              fetched=$((fetched + 1))
+            else
+              rc=$?
+              echo "::warning::failed to fetch $url (curl exit $rc)"
+              echo "! $filename  FAILED (curl $rc)  <- $url" >> /tmp/fetch-summary.txt
+              rm -f "$target"
+              failed=$((failed + 1))
+            fi
+          done < sources-wishlist.txt
+
+          echo "fetched=$fetched" >> "$GITHUB_OUTPUT"
+          echo "failed=$failed" >> "$GITHUB_OUTPUT"
+
+          echo "=== summary ==="
+          cat /tmp/fetch-summary.txt || true
+
+      - name: Commit and push new sources
+        if: steps.fetch.outputs.fetched != '0'
+        run: |
+          set -euo pipefail
+
+          if [ -z "$(git status --porcelain sources-raw)" ]; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "pbl-corpus-fetcher[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config commit.gpgsign false
+
+          git add sources-raw
+          summary="$(cat /tmp/fetch-summary.txt 2>/dev/null || true)"
+          git commit -m "fetch-sources: add $(echo "$summary" | grep -c '^+ ') file(s) from wishlist
+
+          $summary"
+          git push

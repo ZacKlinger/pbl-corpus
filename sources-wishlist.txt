@@ -1,0 +1,46 @@
+# Sources wishlist
+#
+# Format: one entry per line.
+#   <filename> <url>
+# Filename must not contain slashes. Lines starting with # are ignored.
+#
+# The fetch-sources GitHub Action reads this file, downloads each URL into
+# sources-raw/, runs a MIME-type check (a .pdf line that returns text/html
+# is recorded as WRONG-TYPE and the file is deleted), and commits the bytes
+# back to main.
+#
+# STRAWMAN: the entries below are first-pass best guesses at canonical URLs
+# for the queue.md priority list. The agent should validate the workflow's
+# fetch result on the first run; any URL that fails should be demoted to
+# leads/ and replaced with a working mirror.
+
+# --- Priority 1: anchor empirical synthesis ---
+Condliffe-2017-pbl-literature-review.pdf https://www.mdrc.org/sites/default/files/Project-Based_Learning-LitRev_Final.pdf
+
+# --- Priority 2: anchor practitioner framework ---
+# (PBLWorks Gold Standard is a web page set, not a PDF. Most direct primary
+# document is the 2015 ASCD book "Setting the Standard for Project Based
+# Learning" by Larmer/Mergendoller/Boss. That book is paywalled. The agent
+# should record a lead and request Zack to supply the book; meanwhile,
+# fetch PBLWorks' freely-published framework overview as a starting anchor.)
+PBLWorks-2019-gold-standard-pbl-design-elements.pdf https://my.pblworks.org/system/files/2019-01/Gold%20Standard%20PBL%20Design%20Elements%20Poster.pdf
+
+# --- Priority 3: foundational visionary ---
+Kilpatrick-1918-project-method.pdf https://www.educacao.cefetmg.br/wp-content/uploads/sites/25/2017/06/Kilpatrick_1918-the-project-method.pdf
+
+# --- Priority 5: empirical headline meta-analysis ---
+# Chen & Yang 2019 is published in Educational Research Review (Elsevier,
+# paywalled). The agent should attempt the URL below; on WRONG-TYPE or
+# FAILED, demote to leads and request Zack supply via institutional access.
+Chen-Yang-2019-pbl-meta-analysis.pdf https://www.sciencedirect.com/science/article/pii/S1747938X18301027
+
+# --- HQPBL framework (practitioner) ---
+HQPBL-2018-framework.pdf https://hqpbl.org/wp-content/uploads/2018/03/FrameworkforHQPBL.pdf
+
+# --- Lucas Education Research RCTs (empirical) ---
+# Saavedra et al. 2021 AP Government and Environmental Science PBL RCTs
+Saavedra-2021-knowledge-in-action-ap-gov.pdf https://www.lucasedresearch.org/wp-content/uploads/2021/06/Knowledge-in-Action-Efficacy-Study-Year-2-Report.pdf
+
+# --- HQPBL adjacent / EL Education leads ---
+# EL Education's freely-published Core Practices doc
+EL-Education-2020-core-practices.pdf https://eleducation.org/wp-content/uploads/2023/12/EL-Education-Core-Practices.pdf
