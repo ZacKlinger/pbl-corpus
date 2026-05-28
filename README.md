@@ -1,8 +1,10 @@
 # pbl-corpus
 
-A research corpus on project-based learning — execution frameworks (PBLWorks Gold Standard, EL Education, HTH, NTN), impact literature (Chen & Yang, Condliffe, Lucas Education Research, Hattie), and foundational theory (Dewey, Kilpatrick, UbD, How People Learn, Vygotsky).
+A domain-expertise corpus on project-based learning — its design frameworks (PBLWorks Gold Standard, HQPBL, EL Education, HTH, NTN), its literature (Condliffe/MDRC, Chen & Yang, Lucas Education Research, Mehta & Fine), and its intellectual lineage (Dewey, Kilpatrick, Bruner, Vygotsky, UbD, How People Learn).
 
-Companion to [`learning-thesis`](../learning-thesis). The two repos share the [corpus protocol](docs/corpus-protocol.md) so a future RAG can rank claims across both.
+**Scope:** This corpus is a *scholar of* PBL — it catalogs the field, including the field's internal disagreements, faithfully. It does **not** adjudicate whether PBL "works." That question lives in the [`learning-thesis`](../learning-thesis) sibling corpus, where PBL is one candidate instance of "ambitious learning that wasn't previously possible." External critiques of PBL (cognitive-load-theory objections, direct-instruction counter-arguments) belong there; they cross-link from here.
+
+The two repos share the [corpus protocol](docs/corpus-protocol.md) so a future RAG can rank claims across both.
 
 ## How to read this repo
 

@@ -1,41 +1,51 @@
 # Thesis seeds
 
 > ⚠️ **STRAWMAN — for Zack to edit before the first Saturday agent run.**
-> These are draft threads, not authored convictions. The agent will treat
-> whatever survives your edit as the direction for week-one work. Cross out,
-> add, or rewrite freely. Particularly: the connective tissue between threads
-> is mine, not yours — interrogate it.
+> These are draft areas-of-expertise this corpus is mastering. They are
+> **not propositions to be defended.** Whether PBL "works" or "doesn't work"
+> is the `learning-thesis` corpus's question, not this one. This corpus's
+> job is to know PBL deeply and accurately — its design, its practice, its
+> lineage, its literature, its internal disagreements — so that
+> `pbl-product` can build on accurate PBL expertise.
 
 **Status:** v0 strawman (2026-05-27). Replace with v1 once you've shaped this.
 
 ## Working frame
 
-Project-based learning is a candidate for what `pbl-product` calls *ambitious learning* — the kind of work AI/tech should enable rather than optimize away. The corpus exists to defend (or complicate) that candidacy with evidence: what does PBL actually do for students; what does it take to execute well; where does the empirical case overreach.
+This is a domain-expertise corpus on project-based learning. The agent is a **scholar of PBL**, not a judge of PBL. When the field disagrees with itself, that disagreement is the finding to be recorded — not an objection to be resolved. When critiques of PBL exist outside the field (Kirschner/Sweller/Clark, etc.), they belong in `learning-thesis/claim-evidence/`, where AI/tech in education is being adjudicated against the historical pattern. They are not load-bearing here.
 
-## Strongly-felt threads (drafts to react to)
+The downstream consumer is `pbl-product`, an AI-native platform for project-based learning. The product needs faithful expert knowledge of:
+- What PBL **is** (design elements that distinguish a project from coursework)
+- How PBL **works in practice** (the pedagogical moves of a PBL teacher)
+- How PBL **is assessed** (rubrics, performance assessment, defense of learning)
+- Where PBL **came from** (intellectual lineage, naming, institutional history)
+- What the **literature describes** about PBL (outcomes studied, moderators identified, where the field disagrees with itself)
+- What **system conditions** the literature documents as enabling PBL (PD, planning time, scheduling, coaching, leadership support, curriculum integration)
 
-### 1. PBL effectiveness depends on implementation fidelity, not the format
-The strongest empirical critique of PBL is also the strongest case *for* it: it works when it's executed at the fidelity its frameworks describe, and looks indistinguishable from average instruction when it isn't. Chen & Yang's meta-analysis, the MDRC/Condliffe synthesis, and Lucas Education Research's RCTs all point at this. If the thread holds, the product's job is to make high-fidelity execution easier to reach — not to make PBL itself easier.
+## Threads (drafts to react to)
 
-### 2. Frameworks ≠ findings
-PBLWorks' Gold Standard PBL, HQPBL, EL Education's core practices, and the New Tech / High Tech High design rubrics are aspirational design philosophies, not measured outcomes. Treating them as empirical authority is a category error the field commits constantly. This thread holds the rest honest: every claim about "what PBL does" must clear an evidence bar that framework documents alone don't.
+### 1. The design elements of a PBL project
+What specifies a project as PBL (vs. coursework with a project attached). The PBLWorks Gold Standard's seven essential elements; the HQPBL framework's six criteria; the EL Education core practices; HTH's defining features; New Tech Network's design principles. Where these converge, where they diverge, and what the *operative* definition of a "project" is across the canonical practitioner frameworks. The corpus's job is to render this faithfully — including the disagreements — not to crown one definition.
 
-### 3. The Kirschner/Sweller/Clark steelman
-The most coherent attack on inquiry-driven approaches argues that for novice and intermediate learners, controlled studies favor direct, strongly guided instruction over minimal-guidance / problem-based / discovery formats. The PBL canon cannot duck this. Hmelo-Silver, Duncan & Chinn's 2007 rejoinder is the conventional reply; whether it actually defangs the critique for K–12 PBL specifically is open.
+### 2. PBL pedagogy in practice
+How PBL teachers actually facilitate the work: scaffolding inquiry, conducting critique and revision, designing formative assessment inside an extended project, balancing direct instruction with student-led work, managing collaboration without sacrificing individual accountability, the role of the driving question, the role of the public product, the role of the public audience. The how-to of being a PBL teacher, drawn from the practitioner literature and the implementation studies that document it.
 
-### 4. Project quality has a structural definition, not just a vibes definition
-The HQPBL framework and Gold Standard EDP try to make "quality" specifiable: intellectual challenge, authenticity, public product, collaboration, project management, reflection. The empirical question is whether those specific dimensions track outcome variation. Hattie's effect-size literature, the Lucas RCTs (Deeper Learning, Knowledge in Action, Multiple Literacies in Project-Based Learning), and Mehta & Fine's *In Search of Deeper Learning* are the load-bearing checks.
+### 3. Assessment and rigor in PBL
+How rigor is preserved when the unit of work is a project rather than a unit-test. PBLWorks rubrics, EL's *Models of Excellence*, HTH's presentations of learning / defense of learning, NTN's learning outcome rubrics, the relationship between PBL and Understanding by Design (Wiggins & McTighe) backward design, standards alignment in PBL, performance assessment traditions (Wiggins, Mehrens, Stiggins), and how the field handles the assessment-of-deeper-learning question.
 
-### 5. The teacher as the bottleneck
-Every honest implementation account — High Tech High case studies, EL school redesigns, NTN coaching reports — converges on the same finding: PBL succeeds when teachers have the time, training, and authority to design projects well. The product's most defensible value proposition is therefore *teacher augmentation*, not project automation. This thread is where the corpus most directly informs `pbl-product` design decisions.
+### 4. The intellectual lineage of PBL
+Dewey (experience as education); Kilpatrick's actual 1918 *Project Method* (often cited, often misread); Bruner (spiral curriculum, narrative meaning-making); Vygotsky (ZPD as the scaffolding theory under guided inquiry); the constructivism/social-constructivism family tree; the Buck Institute / PBLWorks founding history; the deeper-learning movement; how PBL relates to inquiry-based learning, problem-based learning (medical/business school tradition), design thinking, and place-based learning.
 
-## What I don't yet know
+### 5. What the literature describes about PBL
+What outcomes have been studied (achievement, transfer, engagement, agency, equity gaps, college readiness); what moderators have been identified (implementation quality, teacher PD, time, system support, curriculum design); where the field disagrees with itself about what constitutes PBL effectiveness or quality. Cataloging, not evaluating. The Chen & Yang meta-analysis, the Condliffe/MDRC synthesis, the Lucas Education Research RCTs, the Mehta & Fine *In Search of Deeper Learning* findings.
 
-- Whether the empirical case for PBL is genuinely strong, weak-but-promising, or being held up by selection bias and Hawthorne effects in the prominent RCTs.
-- Whether "deeper learning" outcomes (transfer, agency, complex problem solving) are robust enough as constructs to bear the weight the PBL case puts on them.
-- How the U.S. PBL canon (PBLWorks, HQPBL, deeper-learning networks) relates to the international PBL canon (Aalborg PBL, Maastricht PBL, McMaster-style medical PBL) — they may not be the same animal.
-- Where Wiggins & McTighe (Understanding by Design) belongs — Dewey's lineage, or its own thing.
+### 6. The system conditions PBL needs to function
+What the implementation literature consistently documents as the conditions under which PBL succeeds: sustained PD, common planning time, curriculum integration, schedule blocks, leadership support, coaching infrastructure, freedom from compliance overhead that crowds out design time. **The constraint on PBL execution is system-level, not teacher-level.** The implementation literature is direct about this; the corpus records it faithfully.
 
 ## For the agent
 
-When you find research that **complicates** any of the above, that's higher signal than research that confirms it. Surface complications first in each digest. Threads 2 and 3 are explicitly designed to keep the corpus from drifting into PBL-advocacy.
+When you find a disagreement within PBL scholarship — between PBLWorks and EL on quality criteria, between Krajcik and the Lucas team on what counts as a rigorous PBL RCT, between Kilpatrick's actual text and how it's commonly summarized — surface it. That's the kind of finding the corpus exists to record.
+
+When you find a critique of PBL from outside the field (e.g. Kirschner/Sweller/Clark on minimal guidance), **note it as a lead with a cross-reference to `learning-thesis/`** and stop there. The other corpus handles those debates.
+
+When you find an implementation account documenting low PBL fidelity, frame the documented constraints as system conditions (PD hours, planning time, leadership support, schedule structure), not as a story about teacher capability. The literature itself usually does this; preserve that framing.
