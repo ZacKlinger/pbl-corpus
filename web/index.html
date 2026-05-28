@@ -89,15 +89,18 @@
   }
   #view-toggle button.active + button { border-left-color: var(--accent); }
 
+  /* Catalog is hidden via the .view-hidden class (set on the element at
+     page load); when the toggle removes that class the base display:block
+     rule takes over. The previous base rule used display:none, which left
+     the catalog hidden even after the class was removed. */
   #catalog {
-    display: none;
+    display: block;
     background: var(--bg);
     overflow: auto;
     padding: 0;
     position: relative;
   }
   #cy.view-hidden, #catalog.view-hidden { display: none; }
-  #catalog.view-active { display: block; }
 
   .catalog-controls {
     padding: 14px 24px 10px;
