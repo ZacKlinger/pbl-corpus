@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PBL corpus — research web</title>
+<title>Research web — learning-thesis + pbl-corpus</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
 <script src="https://unpkg.com/layout-base@2.0.1/layout-base.js"></script>
@@ -24,7 +24,46 @@
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  #app { display: grid; grid-template-columns: 260px 1fr 380px; height: 100vh; }
+  body { display: flex; flex-direction: column; }
+
+  #corpus-tabs {
+    display: flex;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+  #corpus-tabs button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 14px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.12s, border-color 0.12s;
+  }
+  #corpus-tabs button:hover { color: var(--text); }
+  #corpus-tabs button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  #corpus-tabs .spacer { flex: 1; }
+  #corpus-tabs .tab-note {
+    font-size: 11px;
+    color: var(--muted-2);
+    align-self: center;
+    padding-right: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  #app { display: grid; grid-template-columns: 260px 1fr 380px; flex: 1; min-height: 0; }
   #sidebar, #panel { background: var(--panel); overflow: auto; padding: 18px 18px 24px; }
   #sidebar { border-right: 1px solid var(--border); }
   #panel { border-left: 1px solid var(--border); }
@@ -94,6 +133,14 @@
 </style>
 </head>
 <body>
+
+<div id="corpus-tabs">
+  <button data-corpus="learning-thesis">Learning thesis</button>
+  <button data-corpus="pbl-corpus">PBL corpus</button>
+  <span class="spacer"></span>
+  <span class="tab-note">Two compatible corpora · shared protocol</span>
+</div>
+
 <div id="app">
 
   <div id="sidebar">
@@ -132,6 +179,30 @@
 </div>
 
 <script>
+// --- Per-repo config -----------------------------------------------------
+// LOCAL_CORPUS is the corpus this page is deployed for. The matching tab is
+// active on load, and its graph.json is fetched same-origin (faster, no CORS).
+// The sibling corpus's graph.json is fetched cross-origin from its Pages URL.
+const LOCAL_CORPUS = "pbl-corpus";  // set per repo; sibling page is fetched cross-origin from its Pages URL
+
+const CORPORA = {
+  "learning-thesis": {
+    label: "Learning thesis",
+    pageUrl: "https://zacklinger.github.io/learning-thesis/",
+    githubBase: "https://github.com/ZacKlinger/learning-thesis/blob/main/",
+  },
+  "pbl-corpus": {
+    label: "PBL corpus",
+    pageUrl: "https://zacklinger.github.io/pbl-corpus/",
+    githubBase: "https://github.com/ZacKlinger/pbl-corpus/blob/main/",
+  },
+};
+
+function graphUrlFor(corpus) {
+  return corpus === LOCAL_CORPUS ? "graph.json" : CORPORA[corpus].pageUrl + "graph.json";
+}
+
+// --- Style constants ----------------------------------------------------
 const LAYER_COLOR = {
   thesis:      "#e0af68",
   thread:      "#bb9af7",
@@ -163,14 +234,14 @@ const EDGE_KIND_COLOR = {
   "relates-to": "#7dcfff",
 };
 
-const GITHUB_BASE = "https://github.com/ZacKlinger/pbl-corpus/blob/main/";
-
-let cy, graph;
+// --- Module state (mutated by loadCorpus) -------------------------------
+let cy = null;
+let graph = null;
+let currentCorpus = null;
+let currentGithubBase = "";
 const state = { activeLayers: new Set(), activeThreads: new Set(), selectedId: null };
 
-// Node size as a function of degree (connection count). sqrt scaling so
-// a 1-degree node doesn't disappear and a 10-degree node doesn't dominate.
-// Per-type base preserves the visual hierarchy (seeds and threads read as hubs).
+// --- Helpers ------------------------------------------------------------
 function sizeFor(d) {
   const base = d.type === "seed" ? 28
              : d.type === "thread" ? 24
@@ -183,14 +254,50 @@ function escapeHTML(s) {
   return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-async function main() {
-  graph = await fetch("graph.json?cb=" + Date.now()).then(r => r.json());
+// --- Corpus load --------------------------------------------------------
+async function loadCorpus(corpus) {
+  currentCorpus = corpus;
+  const config = CORPORA[corpus];
+  currentGithubBase = config.githubBase;
+
+  // Tab state
+  document.querySelectorAll("#corpus-tabs button").forEach(b =>
+    b.classList.toggle("active", b.dataset.corpus === corpus));
+
+  // Reset module state
+  state.activeLayers.clear();
+  state.activeThreads.clear();
+  state.selectedId = null;
+
+  // Teardown previous instance
+  if (cy) { cy.destroy(); cy = null; }
+  document.getElementById("search").value = "";
+  document.getElementById("panel").innerHTML = '<p class="empty">Loading…</p>';
+  document.querySelector(".tagline").textContent = "Loading…";
+  document.getElementById("layer-filters").innerHTML = "";
+  document.getElementById("thread-filters").innerHTML = "";
+  document.getElementById("edge-legend").innerHTML = "";
+  document.getElementById("stats").innerHTML = "";
+
+  // Fetch
+  try {
+    const url = graphUrlFor(corpus) + "?cb=" + Date.now();
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    graph = await r.json();
+  } catch (e) {
+    document.querySelector(".tagline").textContent = `${config.label} · unavailable`;
+    document.getElementById("panel").innerHTML =
+      `<p class="empty">Couldn't load <strong>${escapeHTML(config.label)}</strong>: ${escapeHTML(e.message)}. ` +
+      `The sibling corpus may not have been deployed yet — try ` +
+      `<a class="link-out" href="${config.pageUrl}" target="_blank">${escapeHTML(config.pageUrl)}</a>.</p>`;
+    return;
+  }
 
   document.querySelector(".tagline").textContent =
-    `PBL corpus · ${graph.nodes.length} nodes · ${graph.edges.length} edges`;
+    `${config.label} · ${graph.nodes.length} nodes · ${graph.edges.length} edges`;
 
-  // Pre-compute degree (count of edges touching each node) so node sizing
-  // can reflect connectivity at the moment Cytoscape reads the style.
+  // Pre-compute degree (count of edges touching each node).
   const degree = {};
   graph.edges.forEach(e => {
     degree[e.source] = (degree[e.source] || 0) + 1;
@@ -286,7 +393,7 @@ async function main() {
       return `<h2>${dir === "in" ? "Pointed to by" : "Points to"} (${edges.length})</h2><ul>${items}</ul>`;
     };
 
-    const githubLink = d.path ? `<a class="link-out" href="${GITHUB_BASE}${d.path}" target="_blank">View ${d.path} ↗</a>` : "";
+    const githubLink = d.path ? `<a class="link-out" href="${currentGithubBase}${d.path}" target="_blank">View ${d.path} ↗</a>` : "";
 
     const quotesBlock = d.quotes && d.quotes.length ? `
       <h2>Verbatim (${d.quotes.length})</h2>
@@ -337,6 +444,9 @@ async function main() {
     renderPanel(node);
     cy.animate({ center: { eles: node }, duration: 250, easing: "ease-out" });
   }
+
+  // Reset panel on fresh load
+  renderPanel(null);
 
   // Hover preview
   const tip = document.getElementById("hover-tip");
@@ -441,49 +551,64 @@ async function main() {
     });
   }
 
-  // Search
-  const search = document.getElementById("search");
-  function runSearch() {
-    const q = search.value.trim().toLowerCase();
-    cy.nodes().removeClass("search-hit");
-    if (!q) return;
-    const matches = cy.nodes().filter(n => {
-      const d = n.data();
-      const hay = ((d.label || "") + " " + (d.title || "") + " " + (d.thesis_excerpt || "")).toLowerCase();
-      return hay.includes(q);
-    });
-    matches.addClass("search-hit");
-    if (matches.length === 1) selectNode(matches[0]);
-    else if (matches.length > 1) cy.fit(matches, 80);
-  }
-  search.addEventListener("input", runSearch);
-
-  // Toolbar
-  document.getElementById("btn-fit").onclick = () => cy.fit(undefined, 50);
-  document.getElementById("btn-reset").onclick = () => {
-    cy.layout({ name: "cose-bilkent", animate: true, animationDuration: 600, randomize: true,
-                nodeRepulsion: 9000, idealEdgeLength: 120, edgeElasticity: 0.45, gravity: 0.3, padding: 40 }).run();
-  };
-
-  // Keyboard
-  document.addEventListener("keydown", e => {
-    if (e.target === search) {
-      if (e.key === "Escape") { search.value = ""; runSearch(); search.blur(); }
-      return;
-    }
-    if (e.key === "/") { e.preventDefault(); search.focus(); search.select(); }
-    else if (e.key === "Escape") {
-      cy.elements().unselect().removeClass("highlight");
-      state.selectedId = null;
-      renderPanel(null);
-    }
-    else if (e.key === "f" || e.key === "F") cy.fit(undefined, 50);
-  });
-
   document.getElementById("stats").innerHTML = `Generated ${graph.generated_at || "—"}`;
 }
 
-main();
+// --- Search (operates on whatever cy is current) ----------------------------
+function runSearch() {
+  if (!cy) return;
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  cy.nodes().removeClass("search-hit");
+  if (!q) return;
+  const matches = cy.nodes().filter(n => {
+    const d = n.data();
+    const hay = ((d.label || "") + " " + (d.title || "") + " " + (d.thesis_excerpt || "")).toLowerCase();
+    return hay.includes(q);
+  });
+  matches.addClass("search-hit");
+  if (matches.length === 1) {
+    matches[0].select();
+    cy.animate({ center: { eles: matches[0] }, duration: 250, easing: "ease-out" });
+  } else if (matches.length > 1) {
+    cy.fit(matches, 80);
+  }
+}
+
+// --- One-time global handlers ----------------------------------------------
+document.querySelectorAll("#corpus-tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.dataset.corpus !== currentCorpus) loadCorpus(btn.dataset.corpus);
+  });
+});
+
+document.getElementById("search").addEventListener("input", runSearch);
+
+document.getElementById("btn-fit").addEventListener("click", () => { if (cy) cy.fit(undefined, 50); });
+document.getElementById("btn-reset").addEventListener("click", () => {
+  if (!cy) return;
+  cy.layout({
+    name: "cose-bilkent", animate: true, animationDuration: 600, randomize: true,
+    nodeRepulsion: 9000, idealEdgeLength: 120, edgeElasticity: 0.45, gravity: 0.3, padding: 40,
+  }).run();
+});
+
+document.addEventListener("keydown", e => {
+  const search = document.getElementById("search");
+  if (e.target === search) {
+    if (e.key === "Escape") { search.value = ""; runSearch(); search.blur(); }
+    return;
+  }
+  if (e.key === "/") { e.preventDefault(); search.focus(); search.select(); }
+  else if (e.key === "Escape" && cy) {
+    cy.elements().unselect().removeClass("highlight");
+    state.selectedId = null;
+    document.getElementById("panel").innerHTML = '<p class="empty">Click a node for details. Hover for a peek.</p>';
+  }
+  else if ((e.key === "f" || e.key === "F") && cy) cy.fit(undefined, 50);
+});
+
+// --- Boot -------------------------------------------------------------------
+loadCorpus(LOCAL_CORPUS);
 </script>
 </body>
 </html>
