@@ -900,13 +900,19 @@ function renderCatalog() {
         </div>`
       : "";
 
+    // Card actions link to the source itself, not to the agent's .md notes.
+    // The notes are surfaced via the side panel when the card is clicked.
     const actions = [];
-    if (n.path) actions.push(
-      `<a class="card-action" href="${currentGithubBase}${n.path}" target="_blank" rel="noopener">📝 Source note</a>`
-    );
-    if (n.raw_path) actions.push(
-      `<a class="card-action" href="${currentGithubBase}${n.raw_path}" target="_blank" rel="noopener">📄 Raw file</a>`
-    );
+    if (n.raw_path) {
+      // raw.githubusercontent.com lets the PDF render in the browser
+      // instead of GitHub's preview wrapper around it.
+      const rawHost = currentGithubBase
+        .replace("https://github.com/", "https://raw.githubusercontent.com/")
+        .replace("/blob/", "/");
+      actions.push(
+        `<a class="card-action" href="${rawHost}${n.raw_path}" target="_blank" rel="noopener" title="Open the document we have on file">📄 Document</a>`
+      );
+    }
     if (n.url) {
       const host = urlHost(n.url);
       actions.push(
