@@ -9,38 +9,34 @@
 # is recorded as WRONG-TYPE and the file is deleted), and commits the bytes
 # back to main.
 #
-# STRAWMAN: the entries below are first-pass best guesses at canonical URLs
-# for the queue.md priority list. The agent should validate the workflow's
-# fetch result on the first run; any URL that fails should be demoted to
-# leads/ and replaced with a working mirror.
+# Agent triage on 2026-05-28 (first weekly run): the two priority anchors
+# (Condliffe 2017 and HQPBL 2018) fetched successfully and have been
+# verified into sources/. The five entries that failed on the first fetch
+# run have been demoted to leads/ with access-status notes. The wishlist
+# below is empty pending mirror URLs from Zack — see the digest's "Where I
+# need you" section.
 
-# --- Priority 1: anchor empirical synthesis ---
-Condliffe-2017-pbl-literature-review.pdf https://www.mdrc.org/sites/default/files/Project-Based_Learning-LitRev_Final.pdf
+# --- Successfully fetched and verified into sources/ (kept for reference) ---
+# Condliffe-2017-pbl-literature-review.pdf https://www.mdrc.org/sites/default/files/Project-Based_Learning-LitRev_Final.pdf
+# HQPBL-2018-framework.pdf https://hqpbl.org/wp-content/uploads/2018/03/FrameworkforHQPBL.pdf
 
-# --- Priority 2: anchor practitioner framework ---
-# (PBLWorks Gold Standard is a web page set, not a PDF. Most direct primary
-# document is the 2015 ASCD book "Setting the Standard for Project Based
-# Learning" by Larmer/Mergendoller/Boss. That book is paywalled. The agent
-# should record a lead and request Zack to supply the book; meanwhile,
-# fetch PBLWorks' freely-published framework overview as a starting anchor.)
-PBLWorks-2019-gold-standard-pbl-design-elements.pdf https://my.pblworks.org/system/files/2019-01/Gold%20Standard%20PBL%20Design%20Elements%20Poster.pdf
-
-# --- Priority 3: foundational visionary ---
-Kilpatrick-1918-project-method.pdf https://www.educacao.cefetmg.br/wp-content/uploads/sites/25/2017/06/Kilpatrick_1918-the-project-method.pdf
-
-# --- Priority 5: empirical headline meta-analysis ---
-# Chen & Yang 2019 is published in Educational Research Review (Elsevier,
-# paywalled). The agent should attempt the URL below; on WRONG-TYPE or
-# FAILED, demote to leads and request Zack supply via institutional access.
-Chen-Yang-2019-pbl-meta-analysis.pdf https://www.sciencedirect.com/science/article/pii/S1747938X18301027
-
-# --- HQPBL framework (practitioner) ---
-HQPBL-2018-framework.pdf https://hqpbl.org/wp-content/uploads/2018/03/FrameworkforHQPBL.pdf
-
-# --- Lucas Education Research RCTs (empirical) ---
-# Saavedra et al. 2021 AP Government and Environmental Science PBL RCTs
-Saavedra-2021-knowledge-in-action-ap-gov.pdf https://www.lucasedresearch.org/wp-content/uploads/2021/06/Knowledge-in-Action-Efficacy-Study-Year-2-Report.pdf
-
-# --- HQPBL adjacent / EL Education leads ---
-# EL Education's freely-published Core Practices doc
-EL-Education-2020-core-practices.pdf https://eleducation.org/wp-content/uploads/2023/12/EL-Education-Core-Practices.pdf
+# --- Demoted to leads/ on 2026-05-28 (mirror URLs needed) ---
+# See leads/PBLWorks-2015-gold-standard-pbl.md
+# (Original wishlist attempt: my.pblworks.org → WRONG-TYPE, likely auth wall)
+#
+# See leads/Kilpatrick-1918-project-method.md
+# (Original wishlist attempt: educacao.cefetmg.br → curl 6 DNS failure;
+#  the text is public domain and mirrored on archive.org if a stable
+#  direct-PDF URL can be confirmed)
+#
+# See leads/Chen-Yang-2019-pbl-meta-analysis.md
+# (Original wishlist attempt: sciencedirect.com → curl 22, Elsevier paywall;
+#  needs institutional access or author preprint)
+#
+# See leads/Saavedra-2021-knowledge-in-action-ap-gov.md
+# (Original wishlist attempt: lucasedresearch.org → curl 22, URL no longer
+#  resolves; the report is public — needs current URL)
+#
+# See leads/EL-Education-core-practices.md
+# (Original wishlist attempt: eleducation.org → WRONG-TYPE, likely gated;
+#  the Core Practices doc is publicly distributed — needs current URL)
