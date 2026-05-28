@@ -1,0 +1,49 @@
+name: deploy-pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "sources/**"
+      - "claim-evidence/**"
+      - "leads/**"
+      - "canon-map.md"
+      - "thesis-seeds.md"
+      - "bin/build-graph.py"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Regenerate graph.json
+        run: python3 bin/build-graph.py
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

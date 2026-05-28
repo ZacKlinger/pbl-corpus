@@ -11,7 +11,7 @@ _Last regenerated: 2026-05-28_
 | Verified sources (read & quoted) | 0 |
 | Claim-evidence threads | 0 |
 | Leads files (unverified material) | 0 |
-| Raw primary-source files awaiting processing | 0 |
+| Raw primary-source files awaiting processing | 2 |
 | Weekly digests | 0 |
 | Session logs | 0 |
 
@@ -37,7 +37,8 @@ _(empty)_
 
 Files in `sources-raw/` that the fetcher workflow has delivered but the agent has not yet produced a verified source note for. The agent reads from here each Saturday.
 
-_(empty)_
+- `Condliffe-2017-pbl-literature-review.pdf` (1039KB)
+- `HQPBL-2018-framework.pdf` (734KB)
 
 ## Weekly digests
 

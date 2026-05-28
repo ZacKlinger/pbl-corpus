@@ -163,3 +163,8 @@ n_raw=$(find sources-raw -maxdepth 1 -type f ! -name 'README.md' 2>/dev/null | w
 } > "$OUT"
 
 echo "wrote $OUT"
+
+# Also regenerate the research-web graph if the extractor is present.
+if [ -x bin/build-graph.py ]; then
+    python3 bin/build-graph.py
+fi

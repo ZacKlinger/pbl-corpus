@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PBL corpus — research web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+<script src="https://unpkg.com/layout-base@2.0.1/layout-base.js"></script>
+<script src="https://unpkg.com/cose-base@2.2.0/cose-base.js"></script>
+<script src="https://unpkg.com/cytoscape-cose-bilkent@4.1.0/cytoscape-cose-bilkent.js"></script>
+<style>
+  :root {
+    --bg: #0d1017;
+    --bg-elev: #161a22;
+    --panel: #181c25;
+    --border: #242a36;
+    --border-strong: #323948;
+    --text: #e6e9ef;
+    --muted: #8b94a3;
+    --muted-2: #5d6577;
+    --accent: #7aa2f7;
+    --accent-warm: #e0af68;
+    --shadow: 0 4px 24px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #app { display: grid; grid-template-columns: 260px 1fr 380px; height: 100vh; }
+  #sidebar, #panel { background: var(--panel); overflow: auto; padding: 18px 18px 24px; }
+  #sidebar { border-right: 1px solid var(--border); }
+  #panel { border-left: 1px solid var(--border); }
+  #cy { background: var(--bg); position: relative; }
+  #cy-toolbar { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
+  #cy-toolbar button {
+    background: var(--bg-elev); color: var(--muted); border: 1px solid var(--border-strong);
+    padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  #cy-toolbar button:hover { background: var(--border); color: var(--text); border-color: var(--accent); }
+
+  h1 { font-size: 13px; margin: 0 0 4px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+  h1 + .tagline { font-size: 11px; color: var(--muted-2); margin: 0 0 18px; }
+  h2 { font-size: 11px; margin: 20px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+
+  #search-wrap { position: relative; margin-bottom: 6px; }
+  #search { width: 100%; padding: 8px 10px 8px 30px; background: var(--bg); color: var(--text); border: 1px solid var(--border-strong); border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.12s; }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--muted-2); }
+  #search-wrap::before { content: "⌕"; position: absolute; left: 10px; top: 7px; color: var(--muted-2); font-size: 14px; }
+  .kbd { font: 11px/1 ui-monospace, SFMono-Regular, monospace; color: var(--muted-2); background: var(--bg); border: 1px solid var(--border-strong); padding: 1px 5px; border-radius: 3px; }
+  #search-hint { font-size: 11px; color: var(--muted-2); margin: 4px 0 0; }
+
+  .filter-row, .legend-row { display: flex; align-items: center; gap: 8px; margin: 2px 0; cursor: pointer; user-select: none; padding: 2px 4px; border-radius: 4px; transition: background 0.1s; }
+  .filter-row:hover { background: var(--bg); }
+  .filter-row input { margin: 0; cursor: pointer; }
+  .filter-row label { font-size: 12px; cursor: pointer; flex: 1; color: var(--text); }
+  .swatch { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; border: 1px solid var(--border); }
+
+  #stats { color: var(--muted-2); font-size: 11px; margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--border); line-height: 1.6; }
+
+  #panel .empty { color: var(--muted-2); font-style: italic; }
+  #panel .type-tag { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-warm); margin-bottom: 4px; font-weight: 600; }
+  #panel h3 { margin: 0 0 6px; font-size: 17px; line-height: 1.3; color: var(--text); }
+  #panel .subtitle { color: var(--muted); font-size: 13px; margin: 0 0 14px; line-height: 1.45; font-style: italic; }
+  #panel .meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  #panel .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; background: var(--border); color: var(--muted); }
+  #panel .badge.layer-empirical    { background: rgba(122,162,247,0.18); color: #93b6f9; }
+  #panel .badge.layer-visionary    { background: rgba(158,206,106,0.18); color: #b1d97e; }
+  #panel .badge.layer-practitioner { background: rgba(247,118,142,0.18); color: #f59aac; }
+  #panel .badge.layer-historical   { background: rgba(125,207,255,0.18); color: #97d8ff; }
+  #panel .excerpt { color: var(--muted); font-size: 13px; line-height: 1.55; margin-bottom: 14px; padding-left: 10px; border-left: 2px solid var(--border); }
+  #panel .quotes { margin-bottom: 14px; }
+  #panel .quote { font-size: 12.5px; line-height: 1.5; color: var(--text); margin: 0 0 10px; padding: 8px 12px; background: var(--bg); border-left: 2px solid var(--accent); border-radius: 0 4px 4px 0; }
+  #panel .link-out { display: inline-block; color: var(--accent); text-decoration: none; font-size: 12px; padding: 4px 0; }
+  #panel .link-out:hover { text-decoration: underline; }
+  #panel h2 { margin-top: 18px; }
+  #panel ul { list-style: none; padding: 0; margin: 0; }
+  #panel li { margin: 3px 0; padding: 4px 6px; border-radius: 4px; transition: background 0.1s; cursor: pointer; }
+  #panel li:hover { background: var(--bg); }
+  #panel li a { color: var(--text); text-decoration: none; cursor: pointer; }
+  #panel li:hover a { color: var(--accent); }
+  .edge-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; margin-right: 6px; font-weight: 500; letter-spacing: 0.02em; }
+  .edge-badge.supports    { background: rgba(158,206,106,0.22); color: #b1d97e; }
+  .edge-badge.counters    { background: rgba(247,118,142,0.22); color: #f59aac; }
+  .edge-badge.frames      { background: rgba(187,154,247,0.22); color: #c9b1f7; }
+  .edge-badge.anchors     { background: rgba(224,175,104,0.22); color: #ecc28c; }
+  .edge-badge.relates-to  { background: rgba(125,207,255,0.22); color: #97d8ff; }
+  .edge-badge.tracked-in  { background: rgba(86,95,137,0.30); color: #8b94a3; }
+
+  #hover-tip {
+    position: absolute; pointer-events: none; background: var(--bg-elev); border: 1px solid var(--border-strong);
+    padding: 5px 9px; border-radius: 4px; font-size: 11px; color: var(--text);
+    box-shadow: var(--shadow); z-index: 20; display: none; max-width: 260px; line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="sidebar">
+    <h1>Research web</h1>
+    <p class="tagline">Loading…</p>
+
+    <div id="search-wrap">
+      <input id="search" type="text" placeholder="Search nodes…" autocomplete="off">
+    </div>
+    <p id="search-hint"><span class="kbd">/</span> focus · <span class="kbd">Esc</span> clear · <span class="kbd">F</span> fit</p>
+
+    <h2>Layers</h2>
+    <div id="layer-filters"></div>
+
+    <h2>Threads</h2>
+    <div id="thread-filters"></div>
+
+    <h2>Edge kinds</h2>
+    <div id="edge-legend"></div>
+
+    <div id="stats"></div>
+  </div>
+
+  <div id="cy">
+    <div id="cy-toolbar">
+      <button id="btn-fit" title="Fit to view (F)">⤢ Fit</button>
+      <button id="btn-reset" title="Re-layout">↺ Re-layout</button>
+    </div>
+    <div id="hover-tip"></div>
+  </div>
+
+  <div id="panel">
+    <p class="empty">Click a node for details. Hover for a peek.</p>
+  </div>
+
+</div>
+
+<script>
+const LAYER_COLOR = {
+  thesis:      "#e0af68",
+  thread:      "#bb9af7",
+  empirical:   "#7aa2f7",
+  visionary:   "#9ece6a",
+  practitioner:"#f7768e",
+  historical:  "#7dcfff",
+  lead:        "#565f89",
+  raw:         "#3b4252",
+  "?":         "#565f89",
+};
+
+const LAYER_LABEL = {
+  thread:       "Strand",
+  empirical:    "Empirical",
+  visionary:    "Visionary",
+  practitioner: "Practitioner",
+  historical:   "Historical",
+  lead:         "Lead",
+  raw:          "Raw file",
+};
+
+const EDGE_KIND_COLOR = {
+  anchors:    "#e0af68",
+  supports:   "#9ece6a",
+  counters:   "#f7768e",
+  frames:     "#bb9af7",
+  "tracked-in": "#565f89",
+  "relates-to": "#7dcfff",
+};
+
+const GITHUB_BASE = "https://github.com/ZacKlinger/pbl-corpus/blob/main/";
+
+let cy, graph;
+const state = { activeLayers: new Set(), activeThreads: new Set(), selectedId: null };
+
+// Node size as a function of degree (connection count). sqrt scaling so
+// a 1-degree node doesn't disappear and a 10-degree node doesn't dominate.
+// Per-type base preserves the visual hierarchy (seeds and threads read as hubs).
+function sizeFor(d) {
+  const base = d.type === "seed" ? 28
+             : d.type === "thread" ? 24
+             : 16;
+  const deg = d.degree || 0;
+  return base + Math.sqrt(deg) * 7;
+}
+
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+async function main() {
+  graph = await fetch("graph.json?cb=" + Date.now()).then(r => r.json());
+
+  document.querySelector(".tagline").textContent =
+    `PBL corpus · ${graph.nodes.length} nodes · ${graph.edges.length} edges`;
+
+  // Pre-compute degree (count of edges touching each node) so node sizing
+  // can reflect connectivity at the moment Cytoscape reads the style.
+  const degree = {};
+  graph.edges.forEach(e => {
+    degree[e.source] = (degree[e.source] || 0) + 1;
+    degree[e.target] = (degree[e.target] || 0) + 1;
+  });
+
+  const elements = [
+    ...graph.nodes.map(n => ({ data: { ...n, degree: degree[n.id] || 0 } })),
+    ...graph.edges.map(e => ({ data: { ...e, id: `${e.source}->${e.target}:${e.kind}` } })),
+  ];
+
+  cy = cytoscape({
+    container: document.getElementById("cy"),
+    elements,
+    style: [
+      { selector: "node", style: {
+        "background-color": ele => LAYER_COLOR[ele.data("layer")] || "#888",
+        label: "data(label)",
+        color: "#d8dde6",
+        "font-size": 11,
+        "text-valign": "bottom",
+        "text-margin-y": 7,
+        "text-outline-color": "#0d1017",
+        "text-outline-width": 3,
+        width:  ele => sizeFor(ele.data()),
+        height: ele => sizeFor(ele.data()),
+        "border-width": 2,
+        "border-color": "#0d1017",
+        "transition-property": "background-color, border-color, border-width, width, height, opacity",
+        "transition-duration": "150ms",
+      }},
+      { selector: "node[type='seed']",   style: { shape: "diamond" } },
+      { selector: "node[type='thread']", style: { shape: "round-rectangle" } },
+      { selector: "node[type='lead']",   style: { shape: "triangle", "border-style": "dashed", "border-color": "#5d6577" } },
+      { selector: "node[type='raw']",    style: { shape: "tag", opacity: 0.55 } },
+      { selector: "node:selected", style: {
+        "border-color": "#e0af68",
+        "border-width": 3,
+        width:  ele => sizeFor(ele.data()) + 6,
+        height: ele => sizeFor(ele.data()) + 6,
+      }},
+      { selector: "node.hover", style: { "border-color": "#7aa2f7", "border-width": 3 } },
+      { selector: "edge", style: {
+        width: 1.6,
+        "line-color": ele => EDGE_KIND_COLOR[ele.data("kind")] || "#444",
+        "target-arrow-color": ele => EDGE_KIND_COLOR[ele.data("kind")] || "#444",
+        "target-arrow-shape": "triangle",
+        "arrow-scale": 0.9,
+        "curve-style": "bezier",
+        opacity: 0.7,
+        "transition-property": "opacity, width",
+        "transition-duration": "150ms",
+      }},
+      { selector: "edge[kind='counters']", style: { "line-style": "dashed" } },
+      { selector: "edge.highlight", style: { width: 3, opacity: 1 } },
+      { selector: ".dimmed", style: { opacity: 0.08 } },
+      { selector: ".search-hit", style: { "border-color": "#e0af68", "border-width": 3 } },
+    ],
+    layout: {
+      name: "cose-bilkent",
+      animate: "end",
+      animationDuration: 600,
+      nodeRepulsion: 9000,
+      idealEdgeLength: 120,
+      edgeElasticity: 0.45,
+      gravity: 0.3,
+      padding: 40,
+      randomize: false,
+    },
+    wheelSensitivity: 0.22,
+    minZoom: 0.2,
+    maxZoom: 3,
+  });
+
+  const panel = document.getElementById("panel");
+
+  function renderPanel(node) {
+    if (!node) {
+      panel.innerHTML = '<p class="empty">Click a node for details. Hover for a peek.</p>';
+      return;
+    }
+    const d = node.data();
+    const neighborhood = node.openNeighborhood();
+    const incoming = neighborhood.edges().filter(e => e.target().id() === node.id());
+    const outgoing = neighborhood.edges().filter(e => e.source().id() === node.id());
+
+    const renderList = (edges, dir) => {
+      if (edges.length === 0) return "";
+      const items = edges.map(e => {
+        const other = dir === "in" ? e.source() : e.target();
+        return `<li><a data-id="${other.id()}"><span class="edge-badge ${e.data("kind")}">${e.data("kind")}</span>${escapeHTML(other.data("label"))}</a></li>`;
+      }).join("");
+      return `<h2>${dir === "in" ? "Pointed to by" : "Points to"} (${edges.length})</h2><ul>${items}</ul>`;
+    };
+
+    const githubLink = d.path ? `<a class="link-out" href="${GITHUB_BASE}${d.path}" target="_blank">View ${d.path} ↗</a>` : "";
+
+    const quotesBlock = d.quotes && d.quotes.length ? `
+      <h2>Verbatim (${d.quotes.length})</h2>
+      <div class="quotes">${d.quotes.map(q => `<div class="quote">${escapeHTML(q)}</div>`).join("")}</div>
+    ` : "";
+
+    const excerptBlock = d.thesis_excerpt
+      ? `<div class="excerpt">${escapeHTML(d.thesis_excerpt)}</div>` : "";
+
+    const framingBlock = d.seed_framing
+      ? `<h2>Framing</h2><div class="excerpt">${escapeHTML(d.seed_framing)}</div>` : "";
+    const claimsBlock = (d.type === "thread" && typeof d.claims === "number")
+      ? `<span class="badge" title="Claim headings in this thread">${d.claims} claim${d.claims === 1 ? "" : "s"}</span>` : "";
+
+    panel.innerHTML = `
+      <div class="type-tag">${LAYER_LABEL[d.layer] || d.type}</div>
+      <h3>${escapeHTML(d.label)}</h3>
+      ${d.title ? `<p class="subtitle">${escapeHTML(d.title)}</p>` : ""}
+      <div class="meta-row">
+        ${d.year ? `<span class="badge">${d.year}</span>` : ""}
+        ${d.read_status ? `<span class="badge">${d.read_status}</span>` : ""}
+        ${d.layer && d.layer !== d.type ? `<span class="badge layer-${d.layer}">${d.layer}</span>` : ""}
+        ${d.degree ? `<span class="badge" title="Edges touching this node">${d.degree} edge${d.degree === 1 ? "" : "s"}</span>` : ""}
+        ${claimsBlock}
+      </div>
+      ${framingBlock}
+      ${excerptBlock}
+      ${quotesBlock}
+      ${githubLink}
+      ${renderList(outgoing.toArray(), "out")}
+      ${renderList(incoming.toArray(), "in")}
+    `;
+
+    panel.querySelectorAll("a[data-id]").forEach(a => {
+      a.addEventListener("click", ev => {
+        ev.preventDefault();
+        const target = cy.getElementById(ev.currentTarget.getAttribute("data-id"));
+        if (target.length) selectNode(target);
+      });
+    });
+  }
+
+  function selectNode(node) {
+    cy.elements().unselect().removeClass("highlight");
+    node.select();
+    node.connectedEdges().addClass("highlight");
+    state.selectedId = node.id();
+    renderPanel(node);
+    cy.animate({ center: { eles: node }, duration: 250, easing: "ease-out" });
+  }
+
+  // Hover preview
+  const tip = document.getElementById("hover-tip");
+  const cyContainer = document.getElementById("cy");
+  cy.on("mouseover", "node", evt => {
+    const n = evt.target;
+    n.addClass("hover");
+    n.connectedEdges().addClass("highlight");
+    const d = n.data();
+    const tail = d.degree ? ` · ${d.degree} edge${d.degree === 1 ? "" : "s"}` : "";
+    tip.textContent = (d.title || d.label) + (d.year ? ` (${d.year})` : "") + tail;
+    tip.style.display = "block";
+  });
+  cy.on("mousemove", evt => {
+    const e = evt.originalEvent;
+    if (!e) return;
+    const rect = cyContainer.getBoundingClientRect();
+    tip.style.left = (e.clientX - rect.left + 14) + "px";
+    tip.style.top  = (e.clientY - rect.top + 14) + "px";
+  });
+  cy.on("mouseout", "node", evt => {
+    evt.target.removeClass("hover");
+    evt.target.connectedEdges().removeClass("highlight");
+    tip.style.display = "none";
+    if (state.selectedId) {
+      const sel = cy.getElementById(state.selectedId);
+      if (sel.length) sel.connectedEdges().addClass("highlight");
+    }
+  });
+
+  cy.on("tap", "node", evt => selectNode(evt.target));
+  cy.on("tap", evt => {
+    if (evt.target === cy) {
+      cy.elements().unselect().removeClass("highlight");
+      state.selectedId = null;
+      renderPanel(null);
+    }
+  });
+
+  // Filters
+  const layersInUse = [...new Set(graph.nodes.map(n => n.layer))].sort();
+  state.activeLayers = new Set(layersInUse);
+  document.getElementById("layer-filters").innerHTML = layersInUse.map(l => `
+    <div class="filter-row">
+      <input type="checkbox" class="layer-toggle" id="layer-${l}" data-layer="${l}" checked>
+      <div class="swatch" style="background:${LAYER_COLOR[l] || "#888"}"></div>
+      <label for="layer-${l}">${LAYER_LABEL[l] || l}</label>
+    </div>`).join("");
+
+  const threads = graph.nodes.filter(n => n.type === "thread");
+  state.activeThreads = new Set(threads.map(t => t.id));
+  document.getElementById("thread-filters").innerHTML = threads.map(t => `
+    <div class="filter-row">
+      <input type="checkbox" class="thread-toggle" id="${t.id}" data-id="${t.id}" checked>
+      <label for="${t.id}">${escapeHTML(t.label)}</label>
+    </div>`).join("");
+
+  const edgeKindsInUse = [...new Set(graph.edges.map(e => e.kind))].sort();
+  document.getElementById("edge-legend").innerHTML = edgeKindsInUse.map(k => `
+    <div class="legend-row">
+      <div class="swatch" style="background:${EDGE_KIND_COLOR[k] || "#888"}"></div>
+      <span style="font-size:12px;color:var(--muted)">${k}</span>
+    </div>`).join("");
+
+  document.querySelectorAll(".layer-toggle").forEach(el =>
+    el.addEventListener("change", () => {
+      state.activeLayers = new Set(
+        [...document.querySelectorAll(".layer-toggle:checked")].map(el => el.dataset.layer));
+      applyFilters();
+    }));
+  document.querySelectorAll(".thread-toggle").forEach(el =>
+    el.addEventListener("change", () => {
+      state.activeThreads = new Set(
+        [...document.querySelectorAll(".thread-toggle:checked")].map(el => el.dataset.id));
+      applyFilters();
+    }));
+
+  function applyFilters() {
+    cy.elements().removeClass("dimmed");
+    cy.nodes().forEach(n => {
+      if (!state.activeLayers.has(n.data("layer"))) {
+        n.addClass("dimmed");
+        return;
+      }
+      if (n.data("type") === "thread" && !state.activeThreads.has(n.id())) {
+        n.addClass("dimmed");
+        return;
+      }
+      if (n.data("type") === "seed") {
+        const tid = n.id().replace("seed:", "thread:");
+        if (!state.activeThreads.has(tid)) n.addClass("dimmed");
+        return;
+      }
+      const connectedThreads = n.connectedEdges().connectedNodes().filter(m => m.data("type") === "thread");
+      if (connectedThreads.length > 0) {
+        const anyActive = connectedThreads.some(m => state.activeThreads.has(m.id()));
+        if (!anyActive) n.addClass("dimmed");
+      }
+    });
+    cy.edges().forEach(e => {
+      if (e.source().hasClass("dimmed") || e.target().hasClass("dimmed")) e.addClass("dimmed");
+    });
+  }
+
+  // Search
+  const search = document.getElementById("search");
+  function runSearch() {
+    const q = search.value.trim().toLowerCase();
+    cy.nodes().removeClass("search-hit");
+    if (!q) return;
+    const matches = cy.nodes().filter(n => {
+      const d = n.data();
+      const hay = ((d.label || "") + " " + (d.title || "") + " " + (d.thesis_excerpt || "")).toLowerCase();
+      return hay.includes(q);
+    });
+    matches.addClass("search-hit");
+    if (matches.length === 1) selectNode(matches[0]);
+    else if (matches.length > 1) cy.fit(matches, 80);
+  }
+  search.addEventListener("input", runSearch);
+
+  // Toolbar
+  document.getElementById("btn-fit").onclick = () => cy.fit(undefined, 50);
+  document.getElementById("btn-reset").onclick = () => {
+    cy.layout({ name: "cose-bilkent", animate: true, animationDuration: 600, randomize: true,
+                nodeRepulsion: 9000, idealEdgeLength: 120, edgeElasticity: 0.45, gravity: 0.3, padding: 40 }).run();
+  };
+
+  // Keyboard
+  document.addEventListener("keydown", e => {
+    if (e.target === search) {
+      if (e.key === "Escape") { search.value = ""; runSearch(); search.blur(); }
+      return;
+    }
+    if (e.key === "/") { e.preventDefault(); search.focus(); search.select(); }
+    else if (e.key === "Escape") {
+      cy.elements().unselect().removeClass("highlight");
+      state.selectedId = null;
+      renderPanel(null);
+    }
+    else if (e.key === "f" || e.key === "F") cy.fit(undefined, 50);
+  });
+
+  document.getElementById("stats").innerHTML = `Generated ${graph.generated_at || "—"}`;
+}
+
+main();
+</script>
+</body>
+</html>

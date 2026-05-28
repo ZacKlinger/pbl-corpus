@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "raw:Condliffe-2017-pbl-literature-review",
+      "label": "Condliffe 2017 pbl literature review (raw)",
+      "type": "raw",
+      "layer": "raw",
+      "path": "sources-raw/Condliffe-2017-pbl-literature-review.pdf"
+    },
+    {
+      "id": "raw:HQPBL-2018-framework",
+      "label": "HQPBL 2018 framework (raw)",
+      "type": "raw",
+      "layer": "raw",
+      "path": "sources-raw/HQPBL-2018-framework.pdf"
+    }
+  ],
+  "edges": [],
+  "generated_at": "2026-05-28T02:45:08Z"
+}
