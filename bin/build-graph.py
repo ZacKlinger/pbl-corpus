@@ -184,6 +184,7 @@ def build_source_nodes() -> tuple[list[dict], dict[str, str]]:
         text = read(f)
         meta = parse_frontmatter(text)
         node_id = f"source:{f.stem}"
+        raw_path = find_raw_for(f.stem)
         nodes.append(
             {
                 "id": node_id,
@@ -193,13 +194,28 @@ def build_source_nodes() -> tuple[list[dict], dict[str, str]]:
                 "layer": meta.get("layer", "?"),
                 "year": meta.get("year", ""),
                 "read_status": meta.get("read_status", ""),
+                "url": meta.get("url", ""),
+                "access_date": meta.get("access_date", ""),
                 "path": str(f.relative_to(ROOT)),
+                "raw_path": raw_path,
                 "thesis_excerpt": extract_section(text, "Thesis"),
                 "quotes": extract_quotes(text),
+                "threads": [],  # filled in after edges are built
             }
         )
         index[f.stem] = node_id
     return nodes, index
+
+
+def find_raw_for(stem: str) -> str:
+    """Return the relative path to sources-raw/<stem>.<ext> if it exists, else ""."""
+    raw_dir = ROOT / "sources-raw"
+    if not raw_dir.exists():
+        return ""
+    for f in raw_dir.iterdir():
+        if f.is_file() and f.stem == stem:
+            return str(f.relative_to(ROOT))
+    return ""
 
 
 # --- Leads ------------------------------------------------------------------
@@ -384,6 +400,15 @@ def main() -> None:
         + build_thread_lead_edges()
         + build_source_source_edges(source_index)
     )
+
+    # Fill source nodes' `threads` back-references from thread->source edges.
+    source_threads: dict[str, set[str]] = {}
+    for e in edges:
+        if e["source"].startswith("thread:") and e["target"].startswith("source:"):
+            slug = e["source"][len("thread:"):]
+            source_threads.setdefault(e["target"], set()).add(slug)
+    for n in source_nodes:
+        n["threads"] = sorted(source_threads.get(n["id"], set()))
 
     graph = {
         "nodes": thread_nodes + source_nodes + lead_nodes + raw_nodes,

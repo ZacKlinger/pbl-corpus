@@ -44,12 +44,21 @@
       "layer": "empirical",
       "year": "2017",
       "read_status": "read",
+      "url": "https://www.mdrc.org/sites/default/files/Project-Based_Learning-LitRev_Final.pdf",
+      "access_date": "2026-05-28",
       "path": "sources/Condliffe-2017-pbl-literature-review.md",
+      "raw_path": "sources-raw/Condliffe-2017-pbl-literature-review.pdf",
       "thesis_excerpt": "MDRC's working-paper update of Thomas (2000) surveys the PBL literature published 2000\u20132017 and reaches a stable, deliberately modest conclusion: the field still lacks consensus on what PBL is, the implementation literature documents predictable challenges, and the outcomes evidence is \"promising but not proven.\" The paper is descriptive \u2014 it synthesizes the published design principles (Larmer & Mergendoller; Krajcik & Shin; Parker et al.; Darling-Hammond et al.; Ravitz; Thomas; Grant), maps the three ways PBL enters K-12 settings (externally developed curricula, teacher-initiated PBL,\u2026",
       "quotes": [
         "\"The working paper suggests that the evidence for PBL's effectiveness in improving students' outcomes is 'promising but not proven.'\" \u2014 p. iii (Abstract) \u2014 layer: empirical",
         "\"Evaluations of its effectiveness have been hampered by the paucity of valid, reliable, and readily usable measures of the kinds of deeper learning and interpersonal and intrapersonal competencies that PBL aims to promote.\" \u2014 p. iii (Abstract) \u2014 layer: empirical",
         "\"some studies have found positive effects associated with the use of PBL curricula in science and social studies classes. Evidence for its effectiveness in math and literacy classes is more limited. In particular, it has been noted that math teachers have found it difficult to integrate PBL into their instruction.\" \u2014 p. iii (Abstract) \u2014 layer: empirical"
+      ],
+      "threads": [
+        "assessment-and-rigor",
+        "design-elements",
+        "literature-findings",
+        "system-conditions"
       ]
     },
     {
@@ -60,12 +69,20 @@
       "layer": "practitioner",
       "year": "2018",
       "read_status": "read",
+      "url": "https://hqpbl.org/wp-content/uploads/2018/03/FrameworkforHQPBL.pdf",
+      "access_date": "2026-05-28",
       "path": "sources/HQPBL-2018-framework.md",
+      "raw_path": "sources-raw/HQPBL-2018-framework.pdf",
       "thesis_excerpt": "The HQPBL Framework is a six-page practitioner consensus document, facilitated by the Buck Institute for Education, that proposes a *student-experience-side* description of high-quality PBL \u2014 explicitly distinguishing itself from PBL design frameworks written from the teacher's perspective. The framework names six criteria \u2014 Intellectual Challenge and Accomplishment, Authenticity, Public Product, Collaboration, Project Management, and Reflection \u2014 and frames each as a set of guiding questions about what students experience. Its argument for existing is that PBL has gained adoption faster than\u2026",
       "quotes": [
         "\"At the present time, however, there is a lack of agreement about what goes into high quality Project Based Learning.\" \u2014 p. 1 \u2014 layer: practitioner",
         "\"The Framework for High Quality Project Based Learning describes PBL in terms of the student experience and is intended to provide educators everywhere with a shared basis for designing and implementing good projects.\" \u2014 p. 1 \u2014 layer: practitioner",
         "\"It describes six criteria, each of which must be at least minimally present in a project in order for it to be judged 'high quality.'\" \u2014 p. 1 \u2014 layer: practitioner"
+      ],
+      "threads": [
+        "assessment-and-rigor",
+        "design-elements",
+        "system-conditions"
       ]
     },
     {
@@ -316,5 +333,5 @@
       "kind": "supports"
     }
   ],
-  "generated_at": "2026-05-28T03:37:57Z"
+  "generated_at": "2026-05-28T03:51:29Z"
 }

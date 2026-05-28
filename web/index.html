@@ -63,6 +63,126 @@
     letter-spacing: 0.02em;
   }
 
+  #view-toggle { display: flex; align-self: center; margin-right: 14px; }
+  #view-toggle button {
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    color: var(--muted);
+    font: inherit;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+    margin-bottom: 0;
+    border-bottom-width: 1px;
+  }
+  #view-toggle button:first-child { border-radius: 4px 0 0 4px; }
+  #view-toggle button:last-child { border-radius: 0 4px 4px 0; border-left-width: 0; }
+  #view-toggle button:hover { color: var(--text); }
+  #view-toggle button.active {
+    background: var(--bg-elev);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  #view-toggle button.active + button { border-left-color: var(--accent); }
+
+  #catalog {
+    display: none;
+    background: var(--bg);
+    overflow: auto;
+    padding: 0;
+    position: relative;
+  }
+  #cy.view-hidden, #catalog.view-hidden { display: none; }
+  #catalog.view-active { display: block; }
+
+  .catalog-controls {
+    padding: 14px 24px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted-2);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-elev);
+  }
+  .catalog-controls .count { color: var(--muted); }
+  .catalog-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .catalog-table thead th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg-elev);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    border-bottom: 1px solid var(--border-strong);
+    user-select: none;
+    white-space: nowrap;
+  }
+  .catalog-table thead th:hover { color: var(--text); }
+  .catalog-table thead th.sort-asc::after  { content: " ↑"; color: var(--accent); }
+  .catalog-table thead th.sort-desc::after { content: " ↓"; color: var(--accent); }
+  .catalog-table tbody tr {
+    cursor: pointer;
+    transition: background 0.08s;
+  }
+  .catalog-table tbody tr:hover { background: var(--bg-elev); }
+  .catalog-table tbody tr.selected { background: rgba(122,162,247,0.08); }
+  .catalog-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  .cat-title { color: var(--text); font-weight: 500; }
+  .cat-subtitle { color: var(--muted); font-style: italic; font-size: 12px; margin-top: 2px; line-height: 1.35; }
+  .cat-thread {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 1px 6px;
+    margin: 1px 4px 1px 0;
+    border-radius: 3px;
+    background: rgba(187,154,247,0.18);
+    color: #c9b1f7;
+    white-space: nowrap;
+  }
+  .type-pill {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .type-pill.type-source { background: rgba(122,162,247,0.18); color: #93b6f9; }
+  .type-pill.type-thread { background: rgba(187,154,247,0.18); color: #c9b1f7; }
+  .type-pill.type-lead   { background: rgba(86,95,137,0.3);   color: #8b94a3; }
+  .type-pill.type-raw    { background: rgba(59,66,82,0.55);   color: #8b94a3; }
+  .cat-links a {
+    display: inline-block;
+    color: var(--accent);
+    text-decoration: none;
+    margin-right: 8px;
+    font-size: 13px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: background 0.08s;
+  }
+  .cat-links a:hover { background: var(--border); }
+  .catalog-empty { padding: 32px 24px; color: var(--muted-2); font-style: italic; text-align: center; }
+
   #app { display: grid; grid-template-columns: 260px 1fr 380px; flex: 1; min-height: 0; }
   #sidebar, #panel { background: var(--panel); overflow: auto; padding: 18px 18px 24px; }
   #sidebar { border-right: 1px solid var(--border); }
@@ -138,6 +258,10 @@
   <button data-corpus="learning-thesis">Learning thesis</button>
   <button data-corpus="pbl-corpus">PBL corpus</button>
   <span class="spacer"></span>
+  <div id="view-toggle">
+    <button data-view="graph" class="active">Graph</button>
+    <button data-view="catalog">Catalog</button>
+  </div>
   <span class="tab-note">Two compatible corpora · shared protocol</span>
 </div>
 
@@ -171,6 +295,8 @@
     </div>
     <div id="hover-tip"></div>
   </div>
+
+  <div id="catalog" class="view-hidden"></div>
 
   <div id="panel">
     <p class="empty">Click a node for details. Hover for a peek.</p>
@@ -240,6 +366,15 @@ let graph = null;
 let currentCorpus = null;
 let currentGithubBase = "";
 const state = { activeLayers: new Set(), activeThreads: new Set(), selectedId: null };
+
+// Catalog mode state (set by view toggle and the column-header sort UI)
+let currentView = "graph";
+const catalogSort = { key: "label", dir: 1 };
+// Forward-references to the per-corpus closures inside loadCorpus, so the
+// catalog row-click handler can select a node + render the panel even
+// though those functions are defined inside loadCorpus's scope.
+let renderPanelImpl = null;
+let selectNodeImpl = null;
 
 // --- Helpers ------------------------------------------------------------
 function sizeFor(d) {
@@ -443,7 +578,12 @@ async function loadCorpus(corpus) {
     state.selectedId = node.id();
     renderPanel(node);
     cy.animate({ center: { eles: node }, duration: 250, easing: "ease-out" });
+    if (currentView === "catalog") renderCatalog();
   }
+
+  // Expose to module scope so the catalog view can drive selection.
+  renderPanelImpl = renderPanel;
+  selectNodeImpl = selectNode;
 
   // Reset panel on fresh load
   renderPanel(null);
@@ -516,12 +656,14 @@ async function loadCorpus(corpus) {
       state.activeLayers = new Set(
         [...document.querySelectorAll(".layer-toggle:checked")].map(el => el.dataset.layer));
       applyFilters();
+      renderCatalog();
     }));
   document.querySelectorAll(".thread-toggle").forEach(el =>
     el.addEventListener("change", () => {
       state.activeThreads = new Set(
         [...document.querySelectorAll(".thread-toggle:checked")].map(el => el.dataset.id));
       applyFilters();
+      renderCatalog();
     }));
 
   function applyFilters() {
@@ -552,10 +694,140 @@ async function loadCorpus(corpus) {
   }
 
   document.getElementById("stats").innerHTML = `Generated ${graph.generated_at || "—"}`;
+
+  // Build the catalog view from the same data, so a tab switch is instant.
+  renderCatalog();
+}
+
+// --- Catalog view -----------------------------------------------------------
+function renderCatalog() {
+  const cat = document.getElementById("catalog");
+  if (!graph || !graph.nodes) {
+    cat.innerHTML = '<div class="catalog-empty">No data loaded.</div>';
+    return;
+  }
+  const q = document.getElementById("search").value.trim().toLowerCase();
+
+  const rows = graph.nodes
+    .filter(n => state.activeLayers.size === 0 || state.activeLayers.has(n.layer))
+    .filter(n => {
+      // Thread filter: a thread row is shown only if it is itself active.
+      // A source row is shown if it cites at least one active thread (or no threads).
+      // Lead and raw rows are not gated by thread filter.
+      if (n.type === "thread") return state.activeThreads.has(n.id);
+      if (n.type === "source" && n.threads && n.threads.length) {
+        return n.threads.some(t => state.activeThreads.has("thread:" + t));
+      }
+      return true;
+    })
+    .filter(n => {
+      if (!q) return true;
+      const hay = [
+        n.label, n.title, n.thesis_excerpt,
+        (n.threads || []).join(" "),
+        (n.quotes || []).join(" "),
+      ].filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+
+  // Sort
+  const typeRank = { thread: 0, source: 1, lead: 2, raw: 3 };
+  rows.sort((a, b) => {
+    const key = catalogSort.key;
+    const va = key === "type" ? (typeRank[a.type] ?? 99) : (a[key] ?? "");
+    const vb = key === "type" ? (typeRank[b.type] ?? 99) : (b[key] ?? "");
+    const cmp = String(va).localeCompare(String(vb), undefined, { numeric: true, sensitivity: "base" });
+    return catalogSort.dir * cmp;
+  });
+
+  const headers = [
+    { key: "type",        label: "Type"    },
+    { key: "layer",       label: "Layer"   },
+    { key: "label",       label: "Title"   },
+    { key: "year",        label: "Year"    },
+    { key: "read_status", label: "Status"  },
+    { key: null,          label: "Threads" },
+    { key: null,          label: "Links"   },
+  ];
+  const headHtml = "<tr>" + headers.map(h => {
+    let cls = "";
+    if (h.key && h.key === catalogSort.key) cls = catalogSort.dir > 0 ? "sort-asc" : "sort-desc";
+    return `<th${h.key ? ` data-sort="${h.key}"` : ""}${cls ? ` class="${cls}"` : ""}>${h.label}</th>`;
+  }).join("") + "</tr>";
+
+  if (rows.length === 0) {
+    cat.innerHTML = `
+      <div class="catalog-controls"><span class="count">No entries match the current filters / search.</span></div>
+    `;
+    return;
+  }
+
+  const bodyHtml = rows.map(n => {
+    const threadsCell = (n.threads || []).map(t =>
+      `<span class="cat-thread">${escapeHTML(t)}</span>`
+    ).join("");
+    const links = [];
+    if (n.path)     links.push(`<a href="${currentGithubBase}${n.path}" target="_blank" title="Open note on GitHub">note</a>`);
+    if (n.raw_path) links.push(`<a href="${currentGithubBase}${n.raw_path}" target="_blank" title="Open raw file on GitHub">raw</a>`);
+    if (n.url)      links.push(`<a href="${escapeHTML(n.url)}" target="_blank" title="Open original source URL">orig ↗</a>`);
+    const layerBadge = (n.layer && n.layer !== n.type)
+      ? `<span class="badge layer-${n.layer}">${LAYER_LABEL[n.layer] || n.layer}</span>`
+      : "";
+    const selectedCls = state.selectedId === n.id ? ' class="selected"' : "";
+    return `<tr data-id="${n.id}"${selectedCls}>
+      <td><span class="type-pill type-${n.type}">${n.type}</span></td>
+      <td>${layerBadge}</td>
+      <td>
+        <div class="cat-title">${escapeHTML(n.label || "")}</div>
+        ${n.title ? `<div class="cat-subtitle">${escapeHTML(n.title)}</div>` : ""}
+      </td>
+      <td>${escapeHTML(n.year || "")}</td>
+      <td>${escapeHTML(n.read_status || "")}</td>
+      <td>${threadsCell}</td>
+      <td class="cat-links">${links.join("")}</td>
+    </tr>`;
+  }).join("");
+
+  cat.innerHTML = `
+    <div class="catalog-controls">
+      <span class="count">${rows.length} of ${graph.nodes.length} entries</span>
+      <span>· click a column header to sort · click a row for detail in side panel</span>
+    </div>
+    <table class="catalog-table">
+      <thead>${headHtml}</thead>
+      <tbody>${bodyHtml}</tbody>
+    </table>
+  `;
+
+  cat.querySelectorAll("th[data-sort]").forEach(th => {
+    th.addEventListener("click", () => {
+      const k = th.getAttribute("data-sort");
+      if (catalogSort.key === k) catalogSort.dir *= -1;
+      else { catalogSort.key = k; catalogSort.dir = 1; }
+      renderCatalog();
+    });
+  });
+
+  cat.querySelectorAll("tr[data-id]").forEach(tr => {
+    tr.addEventListener("click", ev => {
+      if (ev.target.tagName === "A" || ev.target.closest("a")) return;
+      const id = tr.getAttribute("data-id");
+      if (cy && selectNodeImpl) {
+        const node = cy.getElementById(id);
+        if (node.length) selectNodeImpl(node);
+      }
+    });
+  });
 }
 
 // --- Search (operates on whatever cy is current) ----------------------------
 function runSearch() {
+  // Catalog filters from the search input directly each render, so this only
+  // needs to do the cytoscape side of the work.
+  if (currentView === "catalog") {
+    renderCatalog();
+    return;
+  }
   if (!cy) return;
   const q = document.getElementById("search").value.trim().toLowerCase();
   cy.nodes().removeClass("search-hit");
@@ -574,11 +846,27 @@ function runSearch() {
   }
 }
 
+// Switch between Graph and Catalog without re-fetching graph.json.
+function setView(v) {
+  if (v === currentView) return;
+  currentView = v;
+  document.querySelectorAll("#view-toggle button").forEach(b =>
+    b.classList.toggle("active", b.dataset.view === v));
+  document.getElementById("cy").classList.toggle("view-hidden", v !== "graph");
+  document.getElementById("catalog").classList.toggle("view-hidden", v !== "catalog");
+  if (v === "catalog") renderCatalog();
+  else if (v === "graph" && cy) cy.resize();
+}
+
 // --- One-time global handlers ----------------------------------------------
-document.querySelectorAll("#corpus-tabs button").forEach(btn => {
+document.querySelectorAll("#corpus-tabs button[data-corpus]").forEach(btn => {
   btn.addEventListener("click", () => {
     if (btn.dataset.corpus !== currentCorpus) loadCorpus(btn.dataset.corpus);
   });
+});
+
+document.querySelectorAll("#view-toggle button").forEach(btn => {
+  btn.addEventListener("click", () => setView(btn.dataset.view));
 });
 
 document.getElementById("search").addEventListener("input", runSearch);
